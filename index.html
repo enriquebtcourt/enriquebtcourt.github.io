@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enrique Betancourt - Content Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #F5B027;
+    --black: #0A0A0A;
+    --white: #FFFFFF;
+    --gray: #888888;
+    --off-white: #F0EDE8;
+    --dark-gray: #1A1A1A;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+
+  /* ── CURSOR ─────────────────────────────────────────── */
+  body { cursor: none; }
+  .cursor {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot {
+    width: 8px; height: 8px; background: var(--yellow);
+    border-radius: 50%; transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px; border: 1.5px solid var(--yellow);
+    border-radius: 50%; transform: translate(-50%, -50%);
+    transition: transform 0.15s, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.6;
+  }
+  body:has(a:hover) .cursor-ring,
+  body:has(button:hover) .cursor-ring {
+    width: 56px; height: 56px; opacity: 1;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 48px;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; letter-spacing: 0.1em; color: var(--yellow);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gray); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--yellow); }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  #hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 0 48px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(245,176,39,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(245,176,39,0.04) 0%, transparent 60%),
+      var(--black);
+  }
+  .hero-noise {
+    position: absolute; inset: 0; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.2em; color: var(--yellow);
+    text-transform: uppercase; margin-bottom: 20px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 14vw, 13rem);
+    line-height: 0.88; letter-spacing: -0.01em;
+    color: var(--white); position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero-title span { color: var(--yellow); }
+  .hero-sub {
+    margin-top: 28px; display: flex; align-items: center; gap: 32px;
+    opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
+  }
+  .hero-sub p {
+    font-size: 1rem; color: var(--gray); max-width: 380px; line-height: 1.6;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--yellow); color: var(--black);
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 16px 28px; text-decoration: none;
+    font-weight: 500; white-space: nowrap;
+    transition: background 0.2s, transform 0.2s;
+    flex-shrink: 0;
+  }
+  .hero-cta:hover { background: var(--white); transform: translateY(-2px); }
+  .hero-scroll {
+    position: absolute; right: 48px; bottom: 80px;
+    writing-mode: vertical-rl; font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.2em; color: var(--gray);
+    text-transform: uppercase; display: flex; align-items: center; gap: 12px;
+    opacity: 0; animation: fadeIn 1s 1.2s forwards;
+  }
+  .hero-scroll::after {
+    content: ''; display: block; width: 1px; height: 48px;
+    background: var(--gray); flex-shrink: 0;
+  }
+
+  /* ── MARQUEE ──────────────────────────────────────────── */
+  .marquee-wrap {
+    border-top: 1px solid #1A1A1A; border-bottom: 1px solid #1A1A1A;
+    background: var(--dark-gray); overflow: hidden; padding: 14px 0;
+  }
+  .marquee-track {
+    display: flex; gap: 0;
+    animation: marquee 18s linear infinite;
+    width: max-content;
+  }
+  .marquee-item {
+    display: flex; align-items: center; gap: 20px;
+    padding: 0 32px;
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray);
+    white-space: nowrap;
+  }
+  .marquee-dot { width: 4px; height: 4px; background: var(--yellow); border-radius: 50%; flex-shrink: 0; }
+
+  /* ── SECTION COMMONS ──────────────────────────────────── */
+  section { padding: 100px 48px; }
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--yellow); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-eyebrow::before {
+    content: ''; display: block; width: 28px; height: 1px; background: var(--yellow);
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1; letter-spacing: 0.02em; color: var(--white);
+    margin-bottom: 48px;
+  }
+
+  /* ── ABOUT ────────────────────────────────────────────── */
+  #about { background: var(--dark-gray); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .about-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: #333; border: 1px solid #333; margin-top: 48px;
+  }
+  .stat-box {
+    background: var(--dark-gray); padding: 28px 24px;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--yellow);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray);
+    margin-top: 6px;
+  }
+  .about-text p {
+    font-size: 1.05rem; line-height: 1.75; color: #CCCCCC; margin-bottom: 20px;
+  }
+  .about-text p strong { color: var(--yellow); font-weight: 500; }
+  .services-list {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px;
+  }
+  .service-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid #333; color: var(--gray); padding: 8px 14px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .service-tag:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  /* ── PORTFOLIO ────────────────────────────────────────── */
+  #portfolio { background: var(--black); }
+  .filter-tabs {
+    display: flex; gap: 0; margin-bottom: 48px;
+    border-bottom: 1px solid #1A1A1A;
+  }
+  .filter-btn {
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 14px 24px; background: none; border: none;
+    color: var(--gray); cursor: none;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover { color: var(--yellow); border-bottom-color: var(--yellow); }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+  }
+  .portfolio-item {
+    position: relative; overflow: hidden;
+    background: var(--dark-gray);
+    cursor: none;
+  }
+  .portfolio-item:nth-child(1) { grid-column: span 8; grid-row: span 2; aspect-ratio: unset; min-height: 480px; }
+  .portfolio-item:nth-child(2) { grid-column: span 4; min-height: 232px; }
+  .portfolio-item:nth-child(3) { grid-column: span 4; min-height: 232px; }
+  .portfolio-item:nth-child(4) { grid-column: span 5; min-height: 300px; }
+  .portfolio-item:nth-child(5) { grid-column: span 4; min-height: 300px; }
+  .portfolio-item:nth-child(6) { grid-column: span 3; min-height: 300px; }
+
+  .portfolio-thumb {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+    display: block;
+  }
+  .portfolio-item:hover .portfolio-thumb { transform: scale(1.06); }
+
+  .portfolio-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+    opacity: 0; transition: opacity 0.3s;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 24px;
+  }
+  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+  .portfolio-label {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--yellow);
+    margin-bottom: 6px;
+  }
+  .portfolio-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+    letter-spacing: 0.04em; color: var(--white);
+  }
+
+  /* Placeholder gradient thumbs */
+  .thumb-placeholder {
+    width: 100%; height: 100%; min-height: inherit;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.14em; color: #333; text-transform: uppercase;
+    flex-direction: column; gap: 10px;
+  }
+  .thumb-placeholder svg { opacity: 0.2; }
+
+  .p1 { background: linear-gradient(135deg, #1a1a0a 0%, #2a1f00 40%, #1a1200 100%); }
+  .p2 { background: linear-gradient(135deg, #0a0a0f 0%, #0f1520 100%); }
+  .p3 { background: linear-gradient(135deg, #0a0f0a 0%, #0a1a10 100%); }
+  .p4 { background: linear-gradient(135deg, #150a0a 0%, #1a0a0a 100%); }
+  .p5 { background: linear-gradient(135deg, #0a0a15 0%, #100a20 100%); }
+  .p6 { background: linear-gradient(135deg, #0a1010 0%, #051515 100%); }
+
+  .play-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    border: 1.5px solid rgba(245,176,39,0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(245,176,39,0.4);
+    transition: border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .portfolio-item:hover .play-icon { border-color: var(--yellow); color: var(--yellow); }
+
+  .add-work-btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; margin-top: 40px; width: 100%;
+    border: 1px dashed #2a2a2a; padding: 24px;
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: #333; background: none; cursor: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .add-work-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  /* ── VIDEO SECTION ────────────────────────────────────── */
+  #videos { background: var(--dark-gray); }
+  .video-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .video-card {
+    background: var(--black); overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .video-card:hover { transform: translateY(-4px); }
+  .video-thumb {
+    aspect-ratio: 9/16; position: relative; overflow: hidden;
+    background: var(--dark-gray);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .video-thumb-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .v1 { background: linear-gradient(180deg, #1a1200 0%, #0a0a00 100%); }
+  .v2 { background: linear-gradient(180deg, #0a1520 0%, #050a10 100%); }
+  .v3 { background: linear-gradient(180deg, #0a1a10 0%, #050f08 100%); }
+  .video-play {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 2px solid rgba(245,176,39,0.5);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--yellow); transition: all 0.2s;
+  }
+  .video-card:hover .video-play { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
+  .video-info { padding: 20px; }
+  .video-category {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--yellow);
+    margin-bottom: 6px;
+  }
+  .video-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem;
+    letter-spacing: 0.04em; color: var(--white); margin-bottom: 8px;
+  }
+  .video-desc { font-size: 0.82rem; color: var(--gray); line-height: 1.5; }
+
+  /* ── CONTACT ──────────────────────────────────────────── */
+  #contact {
+    background: var(--black);
+    border-top: 1px solid #1A1A1A;
+    text-align: center;
+  }
+  .contact-inner { max-width: 640px; margin: 0 auto; }
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.9; color: var(--white); margin-bottom: 32px;
+  }
+  .contact-title span { color: var(--yellow); }
+  .contact-links {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    justify-content: center; margin-top: 40px;
+  }
+  .contact-link {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray); text-decoration: none;
+    padding: 14px 22px; border: 1px solid #1A1A1A;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .contact-link:hover { color: var(--yellow); border-color: var(--yellow); }
+  .contact-link.primary {
+    background: var(--yellow); color: var(--black); border-color: var(--yellow);
+  }
+  .contact-link.primary:hover { background: var(--white); border-color: var(--white); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  footer {
+    background: var(--dark-gray); padding: 28px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid #1A1A1A;
+  }
+  footer p {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.12em; color: #444; text-transform: uppercase;
+  }
+  footer span { color: var(--yellow); }
+
+  /* ── ANIMATIONS ───────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ── RESPONSIVE ───────────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    #hero { padding: 0 24px 60px; }
+    .hero-scroll { display: none; }
+    section { padding: 72px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .portfolio-item:nth-child(1) { grid-column: span 12; }
+    .portfolio-item:nth-child(2),
+    .portfolio-item:nth-child(3) { grid-column: span 6; }
+    .portfolio-item:nth-child(4),
+    .portfolio-item:nth-child(5),
+    .portfolio-item:nth-child(6) { grid-column: span 12; }
+    .video-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor">
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+</div>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">EB</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#portfolio">Photography</a></li>
+    <li><a href="#videos">Video</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-tag">Greenville, SC - Content Creator</div>
+  <h1 class="hero-title">ENRIQUE<br><span>BETANCOURT</span></h1>
+  <div class="hero-sub">
+    <p>Videographer. Photographer. Content Creator. One session, weeks of content.</p>
+    <a href="#portfolio" class="hero-cta">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      View Work
+    </a>
+  </div>
+  <div class="hero-scroll">Scroll<span></span></div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <!-- repeated twice for seamless loop -->
+    <div class="marquee-item"><span class="marquee-dot"></span>Videography</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Photography</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Content Creation</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Short-Form Reels</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Brand Storytelling</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Podcast Production</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Greenville, SC</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>@Enriquebtcourt</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Videography</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Photography</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Content Creation</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Short-Form Reels</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Brand Storytelling</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Podcast Production</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Greenville, SC</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>@Enriquebtcourt</div>
+  </div>
+</div>
+
+<!-- About -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <div class="section-eyebrow">About</div>
+      <h2 class="section-title">ONE SESSION.<br>WEEKS OF CONTENT.</h2>
+      <p>I help businesses in Greenville stay <strong>consistent and visible online</strong> with professional photo and video content that actually reflects who they are.</p>
+      <p>As a local creator, I move fast - same-week turnarounds, event-ready promos, and a genuine understanding of the Greenville market. I'm not just delivering files, I'm invested in your brand's growth.</p>
+      <div class="services-list">
+        <span class="service-tag">Short-Form Video</span>
+        <span class="service-tag">Brand Photography</span>
+        <span class="service-tag">B-Roll Packages</span>
+        <span class="service-tag">Reels & TikTok</span>
+        <span class="service-tag">Event Coverage</span>
+        <span class="service-tag">Podcast Production</span>
+        <span class="service-tag">Social Media Content</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="about-stats">
+        <div class="stat-box">
+          <div class="stat-num">2x</div>
+          <div class="stat-label">Shoots Per Month</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Videos Delivered</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">30</div>
+          <div class="stat-label">Edited Photos / Mo</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">3-5</div>
+          <div class="stat-label">Day Turnaround</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Portfolio -->
+<section id="portfolio">
+  <div class="section-eyebrow reveal">Photography</div>
+  <h2 class="section-title reveal">RECENT WORK</h2>
+
+  <div class="filter-tabs reveal">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Business</button>
+    <button class="filter-btn">Hospitality</button>
+    <button class="filter-btn">Events</button>
+    <button class="filter-btn">Portrait</button>
+  </div>
+
+  <div class="portfolio-grid">
+    <!-- Replace src="" with your actual image URLs or file paths -->
+    <div class="portfolio-item reveal">
+      <div class="thumb-placeholder p1">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span>Add your hero photo here</span>
+      </div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-label">Featured</div>
+        <div class="portfolio-title">Business Name - Category</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-1">
+      <div class="thumb-placeholder p2">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span>Photo</span>
+      </div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-label">Photography</div>
+        <div class="portfolio-title">Client Name</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-2">
+      <div class="thumb-placeholder p3">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span>Photo</span>
+      </div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-label">Photography</div>
+        <div class="portfolio-title">Client Name</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal">
+      <div class="thumb-placeholder p4">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span>Photo</span>
+      </div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-label">Photography</div>
+        <div class="portfolio-title">Client Name</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-1">
+      <div class="thumb-placeholder p5">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span>Photo</span>
+      </div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-label">Photography</div>
+        <div class="portfolio-title">Client Name</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-2">
+      <div class="thumb-placeholder p6">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span>Photo</span>
+      </div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-label">Photography</div>
+        <div class="portfolio-title">Client Name</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="add-work-btn reveal">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Replace placeholders with your photos - just swap the src URLs
+  </button>
+</section>
+
+<!-- Videos -->
+<section id="videos">
+  <div class="section-eyebrow reveal">Video Work</div>
+  <h2 class="section-title reveal">SHORT-FORM<br>CONTENT</h2>
+
+  <div class="video-grid">
+    <div class="video-card reveal">
+      <div class="video-thumb v1">
+        <div class="video-thumb-inner">
+          <div class="video-play">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M5 3l11 6-11 6V3z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-info">
+        <div class="video-category">Reel / Brand</div>
+        <div class="video-title">CLIENT NAME - BRAND REEL</div>
+        <div class="video-desc">Replace with your video embed or link. Paste your Instagram reel or YouTube short URL here.</div>
+      </div>
+    </div>
+    <div class="video-card reveal reveal-delay-1">
+      <div class="video-thumb v2">
+        <div class="video-thumb-inner">
+          <div class="video-play">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M5 3l11 6-11 6V3z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-info">
+        <div class="video-category">Event Promo</div>
+        <div class="video-title">CLIENT NAME - EVENT COVERAGE</div>
+        <div class="video-desc">Replace with your video embed or link. Paste your Instagram reel or YouTube short URL here.</div>
+      </div>
+    </div>
+    <div class="video-card reveal reveal-delay-2">
+      <div class="video-thumb v3">
+        <div class="video-thumb-inner">
+          <div class="video-play">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M5 3l11 6-11 6V3z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-info">
+        <div class="video-category">Podcast / Talking Head</div>
+        <div class="video-title">THE SOCIAL PODCAST CLUB</div>
+        <div class="video-desc">Replace with your video embed or link. Paste your Instagram reel or YouTube short URL here.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-eyebrow reveal" style="justify-content:center">Let's Work</div>
+    <h2 class="contact-title reveal">LET'S BUILD<br>SOMETHING<br><span>GREAT.</span></h2>
+    <p class="reveal" style="color:var(--gray);line-height:1.7;font-size:1rem;">Based in Greenville, SC. Available for monthly retainers, one-time shoots, and content partnerships. Let's talk about what your brand needs.</p>
+    <div class="contact-links reveal">
+      <a href="mailto:Enriquebtcourt@gmail.com" class="contact-link primary">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 3h12v8H1V3zm0 0l6 5 6-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Enriquebtcourt@gmail.com
+      </a>
+      <a href="https://instagram.com/enriquebtcourt" target="_blank" class="contact-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        @Enriquebtcourt
+      </a>
+      <a href="tel:8649150708" class="contact-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .82h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        864-915-0708
+      </a>
+      <a href="https://youtube.com/@enriquebtcourt" target="_blank" class="contact-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.97C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.97A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
+        YouTube
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p><span>Enrique Betancourt</span> - Content Creator - Greenville, SC</p>
+  <p>@Enriquebtcourt - 864-915-0708</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Filter tabs (UI only - wire up to real filtering if needed)
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
